@@ -1,5 +1,6 @@
 # lm-robustness
-Robust recurrent language model with Random Network Distillation
+Distributionally Robust Recurrent Decoders with Random Network Distillation
+Paper: https://arxiv.org/abs/2110.13229
 
 Based on code from https://github.com/bzhangGo/lrn
 
