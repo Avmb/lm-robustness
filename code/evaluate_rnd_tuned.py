@@ -170,15 +170,18 @@ def evaluate(data_source, data_source_mask, batch_size=10, average_ensemble=True
 
             parallel_rv = parallel_model(*hidden, input=data, average_ensemble=average_ensemble, return_student_distill_loss=True, flatten_returned_lists=True, enable_rnd_tune=True)
             log_prob, student_distill_loss = parallel_rv[0], parallel_rv[-1]
-            student_distill_loss = student_distill_loss.mean()
+            #print(log_prob.shape, student_distill_loss.shape)
+            #student_distill_loss = student_distill_loss.mean()
+            student_distill_loss = student_distill_loss.mean(-1).sum()
             loss = nn.functional.nll_loss(log_prob.view(-1, log_prob.size(2)), masked_targets, ignore_index=-100).data
 
             total_loss += loss * len(data)
-            total_student_loss += student_distill_loss.data * len(data)
+            total_student_loss += student_distill_loss.data #* len(data)
 
             hidden = parallel_rv[1:-1]
             hidden = repackage_hidden(hidden)
-    return total_loss.item() / len(data_source), total_student_loss.item() / len(data_source)
+    student_loss_div = 1 if model.state_proc_only_on_last_layer else model.nlayers
+    return total_loss.item() / len(data_source), total_student_loss.item() / (student_loss_div * len(data_source))
 
 
 # Load the best saved model.

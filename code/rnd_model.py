@@ -123,5 +123,6 @@ class RND(nn.Module):
             #print(distill_loss.mean().item(), self.scaling_coefficient.item(), self.post_scaling_gain.item(), g.mean().item())
             if distill_loss_acc is not None:
                 distill_loss_acc[0] += distill_loss.mean()
+                #print(distill_loss_acc[0])
             return h * g
         return proc
